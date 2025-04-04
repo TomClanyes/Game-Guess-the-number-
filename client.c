@@ -13,25 +13,23 @@ int main(int argc, char *argv[]) {
         return -1;
     }
     
-    // Создание сокета
+    //make socket
     sock = make_socket(SOCK_STREAM);
     if (sock < 0) {
         printf("Socket creation error\n");
         return -1;
     }
     
-    // Настройка адреса сервера
+    //Setting of server addres
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(SERVER_PORT);
     
-    // Преобразование IP-адреса
     if (inet_pton(AF_INET, argv[1], &serv_addr.sin_addr) <= 0) {
         printf("Invalid address/Address not supported\n");
         return -1;
     }
     
-    // Подключение к серверу
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         printf("Connection failed\n");
         return -1;
@@ -39,9 +37,8 @@ int main(int argc, char *argv[]) {
     
     printf("Connected to server at %s:%d\n", argv[1], SERVER_PORT);
     
-    // Игровой цикл
+
     while (1) {
-        // Получение сообщения от сервера
         int bytes_read = read(sock, buffer, BUFFER_SIZE);
         if (bytes_read <= 0) {
             printf("Server disconnected\n");
@@ -50,18 +47,17 @@ int main(int argc, char *argv[]) {
         
         printf("%s\n", buffer);
         
-        // Проверка на завершение игры
-        if (strstr(buffer, "win") != NULL || strstr(buffer, "Correct") != NULL) {
+        if (strstr(buffer, "Congratulation") != NULL) {
             break;
         }
         
-        // Ввод догадки
+        //Guess
         printf("Your guess: ");
         if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
             break;
         }
         
-        // Отправка догадки
+        //Send guess
         send(sock, buffer, strlen(buffer), 0);
     }
     
