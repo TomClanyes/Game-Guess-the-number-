@@ -6,7 +6,10 @@ set(CMAKE_C_STANDART 11)
 
 include_directories(common)
 
-add_executable(pr4
+add_executable(server
 	server.c
+)
+
+add_executable(client
 	client.c
 )
